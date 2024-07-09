@@ -1,5 +1,6 @@
-package com.example.api_university_manager.entities;
+package com.example.api_university_manager.components.user;
 
+import com.example.api_university_manager.util.Role;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,30 +9,21 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name="professors")
-public class Professor implements UserDetails {
+@Table(name = "users")
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String names;
-    String username;
-    String password;
+    private Long id;
+    private String username;
+    private String password;
+    private Set<Role> roles;
 
-    @ManyToMany
-    @JoinTable(
-            name="professor_course",
-            joinColumns = @JoinColumn(name = "professor_id"),
-            inverseJoinColumns = @JoinColumn(name="course_id")
-    )
-    Set<Course> courseSet;
+    public User(){}
 
-    public Professor(){}
-
-    public Professor(String names, String email, String password, Set<Course> courseSet) {
-        this.names = names;
+    public User(String email, String password, Set<Role> roles) {
         this.username = email;
         this.password = password;
-        this.courseSet = courseSet;
+        this.roles = roles;
     }
 
     @Override
@@ -39,12 +31,14 @@ public class Professor implements UserDetails {
         return null;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
+    @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override
@@ -75,14 +69,6 @@ public class Professor implements UserDetails {
         this.id = id;
     }
 
-    public String getNames() {
-        return names;
-    }
-
-    public void setNames(String names) {
-        this.names = names;
-    }
-
     public void setUsername(String email) {
         this.username = email;
     }
@@ -91,22 +77,21 @@ public class Professor implements UserDetails {
         this.password = password;
     }
 
-    public Set<Course> getCourseSet() {
-        return courseSet;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setCourseSet(Set<Course> courseSet) {
-        this.courseSet = courseSet;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
-    public String toString() {
-        return "Professor{" +
+    public String  toString() {
+        return "User{" +
                 "id=" + id +
-                ", names='" + names + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", courseSet=" + courseSet +
+                ", roles=" + roles +
                 '}';
     }
 }

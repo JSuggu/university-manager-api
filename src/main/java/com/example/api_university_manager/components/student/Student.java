@@ -1,5 +1,7 @@
-package com.example.api_university_manager.entities;
+package com.example.api_university_manager.components.student;
 
+import com.example.api_university_manager.components.course.Course;
+import com.example.api_university_manager.components.degree.Degree;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,5 +1,6 @@
-package com.example.api_university_manager.entities;
+package com.example.api_university_manager.components.degree;
 
+import com.example.api_university_manager.components.student.Student;
 import jakarta.persistence.*;
 
 import java.util.Set;

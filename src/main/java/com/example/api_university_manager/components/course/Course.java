@@ -1,5 +1,7 @@
-package com.example.api_university_manager.entities;
+package com.example.api_university_manager.components.course;
 
+import com.example.api_university_manager.components.professor.Professor;
+import com.example.api_university_manager.components.student.Student;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -11,6 +13,7 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private Integer hours;
     private Boolean approved;
     @ManyToMany(mappedBy = "courseSet")
     private Set<Student> studentSet;
@@ -19,8 +22,9 @@ public class Course {
 
     public Course() {}
 
-    public Course(String name, Boolean approved, Set<Student> studentSet, Set<Professor> professorSet) {
+    public Course(String name, Integer hours, Boolean approved, Set<Student> studentSet, Set<Professor> professorSet) {
         this.name = name;
+        this.hours = hours;
         this.approved = approved;
         this.studentSet = studentSet;
         this.professorSet = professorSet;
@@ -40,6 +44,14 @@ public class Course {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getHours() {
+        return hours;
+    }
+
+    public void setHours(Integer hours) {
+        this.hours = hours;
     }
 
     public Boolean getApproved() {
