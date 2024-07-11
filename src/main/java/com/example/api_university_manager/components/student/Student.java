@@ -2,6 +2,7 @@ package com.example.api_university_manager.components.student;
 
 import com.example.api_university_manager.components.course.Course;
 import com.example.api_university_manager.components.degree.Degree;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,10 +15,11 @@ import java.util.Set;
 public class Student implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String names;
-    String username;
-    String password;
+    private Long id;
+    private String names;
+    private Integer dni;
+    private String username;
+    private String password;
 
     @ManyToMany
     @JoinTable(
@@ -37,8 +39,9 @@ public class Student implements UserDetails {
 
     public Student(){}
 
-    public Student(String names, String email, String password, Set<Degree> degreeSet, Set<Course> courseSet) {
+    public Student(String names, Integer dni, String email, String password, Set<Degree> degreeSet, Set<Course> courseSet) {
         this.names = names;
+        this.dni = dni;
         this.username = email;
         this.password = password;
         this.degreeSet = degreeSet;
@@ -95,6 +98,14 @@ public class Student implements UserDetails {
         this.names = names;
     }
 
+    public Integer getDni() {
+        return dni;
+    }
+
+    public void setDni(Integer dni) {
+        this.dni = dni;
+    }
+
     public void setUsername(String email) {
         this.username = email;
     }
@@ -124,6 +135,7 @@ public class Student implements UserDetails {
         return "Student{" +
                 "id=" + id +
                 ", names='" + names + '\'' +
+                ", dni='" + dni + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", degreeSet=" + degreeSet +

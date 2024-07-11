@@ -1,6 +1,8 @@
 package com.example.api_university_manager.components.degree;
 
 import com.example.api_university_manager.components.student.Student;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -10,11 +12,12 @@ import java.util.Set;
 public class Degree {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private  Long id;
     private String name;
     private Integer numberOfHours;
     private Integer numberOfCourses;
     @ManyToMany(mappedBy = "degreeSet")
+    @JsonIgnore
     private Set<Student> studentSet;
 
     public Degree(){}
