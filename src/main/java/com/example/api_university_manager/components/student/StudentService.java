@@ -3,13 +3,13 @@ package com.example.api_university_manager.components.student;
 import com.example.api_university_manager.components.degree.Degree;
 import com.example.api_university_manager.components.degree.DegreeRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -27,7 +27,7 @@ public class StudentService {
     }
 
     @Transactional
-    public Student saveDegree(Student newStudent){
+    public Student saveStudent(Student newStudent){
         Set<Degree> degreesToRegister = new HashSet<>();
         for(Degree degree: newStudent.degreeSet){
             Degree degreeSaved = degreeRepository.findByName(degree.getName());
@@ -39,8 +39,8 @@ public class StudentService {
     }
 
     @Transactional
-    public Student updateDegree(Long id, Student updatedStudent){
-        Student studentToUpdate = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+    public Student updateStudent(Long id, Student updatedStudent) {
+        Student studentToUpdate = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found", new NotFoundException()));
 
         if(updatedStudent.getNames() != null) studentToUpdate.setNames(updatedStudent.getNames());
         if(updatedStudent.getDni() != null) studentToUpdate.setDni(updatedStudent.getDni());

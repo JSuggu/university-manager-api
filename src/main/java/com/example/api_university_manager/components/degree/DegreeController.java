@@ -1,7 +1,10 @@
 package com.example.api_university_manager.components.degree;
 
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 import java.util.List;
 
@@ -17,24 +20,24 @@ public class DegreeController {
     @GetMapping("/get-all")
     public ResponseEntity<List<Degree>> getAllDegrees(){
         List<Degree> degreesList = degreeService.getAllDegrees();
-        return ResponseEntity.ok(degreesList);
+        return ResponseEntity.status(200).body(degreesList);
     }
 
     @PostMapping("/save")
     public ResponseEntity<Degree> saveDegree(@RequestBody Degree requestData){
         Degree savedDegree = degreeService.saveDegree(requestData);
-        return ResponseEntity.ok(savedDegree);
+        return ResponseEntity.status(201).body(savedDegree);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Degree> updateDegree(@PathVariable("id") Long idToUpdate, @RequestBody Degree requestData){
+    @PutMapping(path = "/update/{id}")
+    public ResponseEntity<Degree> updateDegree(@PathVariable(name = "id") Long idToUpdate, @RequestBody Degree requestData) {
         Degree updatedDegree = degreeService.updateDegree(idToUpdate, requestData);
-        return ResponseEntity.ok(updatedDegree);
+        return ResponseEntity.status(201).body(updatedDegree);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteDegree(@PathVariable("id") Long idToDelete){
         degreeService.deleteDegree(idToDelete);
-        return ResponseEntity.ok("Degree deleted");
+        return ResponseEntity.status(200).body("Degree deleted");
     }
 }

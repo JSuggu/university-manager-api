@@ -1,9 +1,9 @@
 package com.example.api_university_manager.components.degree;
 
 import org.springframework.stereotype.Service;
+import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class DegreeService {
@@ -21,8 +21,8 @@ public class DegreeService {
         return degreeRepository.save(newDegree);
     }
 
-    public Degree updateDegree(Long id, Degree updatedDegree){
-        Degree degreeForUpdate = degreeRepository.findById(id).orElseThrow(()-> new RuntimeException("Carrera no encontrado"));
+    public Degree updateDegree(Long id, Degree updatedDegree) {
+        Degree degreeForUpdate = degreeRepository.findById(id).orElseThrow(()-> new RuntimeException("Degree not found", new NotFoundException()));
         if (updatedDegree.getName() != null) degreeForUpdate.setName(updatedDegree.getName());
         if (updatedDegree.getNumberOfHours() != null) degreeForUpdate.setNumberOfHours(updatedDegree.getNumberOfHours());
         if (updatedDegree.getNumberOfCourses() != null) degreeForUpdate.setNumberOfCourses(updatedDegree.getNumberOfCourses());
