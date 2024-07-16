@@ -2,27 +2,27 @@ package com.example.api_university_manager.components.student_course;
 
 import com.example.api_university_manager.components.course.Course;
 import com.example.api_university_manager.components.student.Student;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 @Entity
-public class Student_Course {
-    private Student_Course_Id id = 
-    @ManyToOne(fetch = FetchType.LAZY)
+public class StudentCourse {
+    @EmbeddedId
+    private StudentCourseId id = new StudentCourseId();
+    @JsonIgnore
+    @ManyToOne()
     @MapsId("studentId")
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("courseId")
     private Course course;
 
     private boolean aprproved;
 
-    public Student_Course(){}
+    public StudentCourse(){}
 
-    public Student_Course(Student student, Course course, boolean aprproved) {
+    public StudentCourse(Student student, Course course, boolean aprproved) {
         this.student = student;
         this.course = course;
         this.aprproved = aprproved;

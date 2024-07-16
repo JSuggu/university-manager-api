@@ -1,13 +1,10 @@
 package com.example.api_university_manager.components.student;
 
-import com.example.api_university_manager.components.degree.Degree;
 import com.example.api_university_manager.components.degree.DegreeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/students")
@@ -30,7 +27,7 @@ public class StudentController {
         return ResponseEntity.status(201).body(savedStudent);
     }
 
-    @PutMapping(path = "/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Student> updateStudent(@PathVariable(name = "id") Long idToUpdate,@RequestBody Student requestData){
         Student updatedStudent = studentService.updateStudent(idToUpdate, requestData);
         return ResponseEntity.status(201).body(updatedStudent);

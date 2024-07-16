@@ -6,13 +6,13 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class Student_Course_Id implements Serializable {
+public class StudentCourseId implements Serializable {
     private Long studentId;
     private Long courseId;
 
-    public Student_Course_Id(){}
+    public StudentCourseId(){}
 
-    public Student_Course_Id(Long studentId, Long courseId) {
+    public StudentCourseId(Long studentId, Long courseId) {
         this.studentId = studentId;
         this.courseId = courseId;
     }
@@ -37,7 +37,7 @@ public class Student_Course_Id implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Student_Course_Id that = (Student_Course_Id) o;
+        StudentCourseId that = (StudentCourseId) o;
         return Objects.equals(studentId, that.studentId) && Objects.equals(courseId, that.courseId);
     }
 

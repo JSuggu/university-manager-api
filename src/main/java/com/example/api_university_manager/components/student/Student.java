@@ -2,7 +2,7 @@ package com.example.api_university_manager.components.student;
 
 import com.example.api_university_manager.components.course.Course;
 import com.example.api_university_manager.components.degree.Degree;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.example.api_university_manager.components.student_course.StudentCourse;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,17 +29,12 @@ public class Student implements UserDetails {
     )
     Set<Degree> degreeSet;
 
-    @ManyToMany
-    @JoinTable(
-            name = "student_course",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    Set<Course> courseSet;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<StudentCourse> courseSet;
 
     public Student(){}
 
-    public Student(String names, Integer dni, String email, String password, Set<Degree> degreeSet, Set<Course> courseSet) {
+    public Student(String names, Integer dni, String email, String password, Set<Degree> degreeSet, Set<StudentCourse> courseSet) {
         this.names = names;
         this.dni = dni;
         this.username = email;
@@ -122,11 +117,11 @@ public class Student implements UserDetails {
         this.degreeSet = degreeSet;
     }
 
-    public Set<Course> getCourseSet() {
+    public Set<StudentCourse> getCourseSet() {
         return courseSet;
     }
 
-    public void setCourseSet(Set<Course> courseSet) {
+    public void setCourseSet(Set<StudentCourse> courseSet) {
         this.courseSet = courseSet;
     }
 

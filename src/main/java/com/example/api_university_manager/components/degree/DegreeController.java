@@ -1,10 +1,7 @@
 package com.example.api_university_manager.components.degree;
 
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 import java.util.List;
 
@@ -29,7 +26,7 @@ public class DegreeController {
         return ResponseEntity.status(201).body(savedDegree);
     }
 
-    @PutMapping(path = "/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Degree> updateDegree(@PathVariable(name = "id") Long idToUpdate, @RequestBody Degree requestData) {
         Degree updatedDegree = degreeService.updateDegree(idToUpdate, requestData);
         return ResponseEntity.status(201).body(updatedDegree);

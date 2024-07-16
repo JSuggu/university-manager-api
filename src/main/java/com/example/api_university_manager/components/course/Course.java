@@ -1,7 +1,7 @@
 package com.example.api_university_manager.components.course;
 
 import com.example.api_university_manager.components.professor.Professor;
-import com.example.api_university_manager.components.student.Student;
+import com.example.api_university_manager.components.student_course.StudentCourse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -14,21 +14,19 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Integer hours;
-    private Boolean approved;
+    private Integer numberOfHours;
     @JsonIgnore
-    @ManyToMany(mappedBy = "courseSet")
-    private Set<Student> studentSet;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<StudentCourse> studentSet;
     @JsonIgnore
     @ManyToMany(mappedBy = "courseSet")
     private Set<Professor> professorSet;
 
     public Course() {}
 
-    public Course(String name, Integer hours, Boolean approved, Set<Student> studentSet, Set<Professor> professorSet) {
+    public Course(String name, Integer numberOfHours, Set<StudentCourse> studentSet, Set<Professor> professorSet) {
         this.name = name;
-        this.hours = hours;
-        this.approved = approved;
+        this.numberOfHours = numberOfHours;
         this.studentSet = studentSet;
         this.professorSet = professorSet;
     }
@@ -49,27 +47,19 @@ public class Course {
         this.name = name;
     }
 
-    public Integer getHours() {
-        return hours;
+    public Integer getNumberOfHours() {
+        return numberOfHours;
     }
 
-    public void setHours(Integer hours) {
-        this.hours = hours;
+    public void setNumberOfHours(Integer numberOfHours) {
+        this.numberOfHours = numberOfHours;
     }
 
-    public Boolean getApproved() {
-        return approved;
-    }
-
-    public void setApproved(Boolean approved) {
-        this.approved = approved;
-    }
-
-    public Set<Student> getStudentSet() {
+    public Set<StudentCourse> getStudentSet() {
         return studentSet;
     }
 
-    public void setStudentSet(Set<Student> studentSet) {
+    public void setStudentSet(Set<StudentCourse> studentSet) {
         this.studentSet = studentSet;
     }
 
@@ -86,7 +76,6 @@ public class Course {
         return "Course{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", approved=" + approved +
                 ", studentSet=" + studentSet +
                 ", professorSet=" + professorSet +
                 '}';

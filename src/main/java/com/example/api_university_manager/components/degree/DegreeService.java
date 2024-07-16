@@ -17,15 +17,23 @@ public class DegreeService {
         return degreeRepository.findAll();
     }
 
+    public Degree getDegreeById(Long degreeId) {
+        return degreeRepository.findById(degreeId).orElseThrow(() -> new RuntimeException("not found degree", new NotFoundException()));
+    }
+
+    public Degree getDegreeByName(String degreeName) {
+        return degreeRepository.findByName(degreeName).orElseThrow(() -> new RuntimeException("not found degree", new NotFoundException()));
+    }
+
     public Degree saveDegree(Degree newDegree){
         return degreeRepository.save(newDegree);
     }
 
     public Degree updateDegree(Long id, Degree updatedDegree) {
         Degree degreeForUpdate = degreeRepository.findById(id).orElseThrow(()-> new RuntimeException("Degree not found", new NotFoundException()));
-        if (updatedDegree.getName() != null) degreeForUpdate.setName(updatedDegree.getName());
-        if (updatedDegree.getNumberOfHours() != null) degreeForUpdate.setNumberOfHours(updatedDegree.getNumberOfHours());
-        if (updatedDegree.getNumberOfCourses() != null) degreeForUpdate.setNumberOfCourses(updatedDegree.getNumberOfCourses());
+        degreeForUpdate.setName(updatedDegree.getName());
+        degreeForUpdate.setNumberOfHours(updatedDegree.getNumberOfHours());
+        degreeForUpdate.setNumberOfCourses(updatedDegree.getNumberOfCourses());
         return degreeRepository.save(degreeForUpdate);
     }
 
