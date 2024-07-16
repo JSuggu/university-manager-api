@@ -2,6 +2,7 @@ package com.example.api_university_manager.components.course;
 
 import com.example.api_university_manager.components.professor.Professor;
 import com.example.api_university_manager.components.student.Student;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -15,8 +16,10 @@ public class Course {
     private String name;
     private Integer hours;
     private Boolean approved;
+    @JsonIgnore
     @ManyToMany(mappedBy = "courseSet")
     private Set<Student> studentSet;
+    @JsonIgnore
     @ManyToMany(mappedBy = "courseSet")
     private Set<Professor> professorSet;
 
