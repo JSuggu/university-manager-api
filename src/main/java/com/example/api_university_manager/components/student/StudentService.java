@@ -1,13 +1,14 @@
 package com.example.api_university_manager.components.student;
 
 import com.example.api_university_manager.components.course.Course;
-import com.example.api_university_manager.components.course.CourseRepository;
 import com.example.api_university_manager.components.course.CourseService;
 import com.example.api_university_manager.components.degree.Degree;
 import com.example.api_university_manager.components.degree.DegreeService;
+import com.example.api_university_manager.components.jwt.Token;
 import com.example.api_university_manager.components.student_course.StudentCourse;
-import com.example.api_university_manager.components.student_course.StudentCourseService;
+import com.example.api_university_manager.util.OtherUtilities;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
@@ -20,12 +21,16 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final DegreeService degreeService;
     private final CourseService courseService;
+    private final PasswordEncoder passwordEncoder;
+    private final OtherUtilities otherUtilities;
 
 
-    public StudentService(StudentRepository studentRepository, DegreeService degreeService, CourseService courseService){
+    public StudentService(StudentRepository studentRepository, DegreeService degreeService, CourseService courseService, PasswordEncoder passwordEncoder, OtherUtilities otherUtilities){
         this.studentRepository = studentRepository;
         this.degreeService = degreeService;
         this.courseService = courseService;
+        this.passwordEncoder = passwordEncoder;
+        this.otherUtilities = otherUtilities;
     }
 
     public List<Student> getAllStudents(){
@@ -50,9 +55,15 @@ public class StudentService {
             }
         }
 
+        newStudent.setPassword(passwordEncoder.encode(newStudent.getPassword()));
+
         newStudent.setDegreeSet(degreesToRegister);
         newStudent.setCourseSet(courseToRegister);
         return studentRepository.save(newStudent);
+    }
+
+    public Token login(Student requestData) {
+        return otherUtilities.loginProcess(requestData);
     }
 
     @Transactional

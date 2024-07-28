@@ -1,6 +1,7 @@
 package com.example.api_university_manager.components.student;
 
 import com.example.api_university_manager.components.degree.DegreeService;
+import com.example.api_university_manager.components.jwt.Token;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,12 @@ public class StudentController {
     public ResponseEntity<Student> saveDegree(@RequestBody Student requestData){
         Student savedStudent = studentService.saveStudent(requestData);
         return ResponseEntity.status(201).body(savedStudent);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<Token> login(@RequestBody Student requestData){
+        Token jwt = studentService.login(requestData);
+        return ResponseEntity.status(200).body(jwt);
     }
 
     @PutMapping("/update/{id}")

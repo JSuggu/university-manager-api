@@ -3,10 +3,13 @@ package com.example.api_university_manager.components.user;
 import com.example.api_university_manager.util.Role;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -28,7 +31,10 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return getRoles()
+                .stream()
+                .map((rol -> new SimpleGrantedAuthority(rol.name())))
+                .collect(Collectors.toList());
     }
 
     @Override

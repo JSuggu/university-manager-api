@@ -1,31 +1,47 @@
 package com.example.api_university_manager.configs;
 
+import com.example.api_university_manager.components.professor.ProfessorRepository;
+import com.example.api_university_manager.components.student.StudentRepository;
+import com.example.api_university_manager.components.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
-
-import static org.springframework.security.config.Customizer.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
+
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    StudentRepository studentRepository;
+    @Autowired
+    ProfessorRepository professorRepository;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http
-                .authorizeHttpRequests(request -> request
-                        //.requestMatchers(new RegexRequestMatcher("/^(course|student|professor)/admin/.*$", null)).hasRole("DEVELOPER")
-                        //.requestMatchers(new RegexRequestMatcher("/^(course|student|professor)/developer/.*$", null)).hasRole("ADMIN")
-                        .anyRequest().permitAll())
-                .httpBasic(withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form
-                        .defaultSuccessUrl("/degrees/get-all")
-                        .permitAll());
-        return http.build();
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(){
+        return username -> {
+            UserDetails userDetails = studentRepository.findByUsername(username);
+            if(userDetails == null) userDetails = professorRepository.findByUsername(username);
+            if(userDetails == null) userDetails = userRepository.findByUsername(username);
+            if(userDetails == null) throw new UsernameNotFoundException("Username not found");
+            return userDetails;
+        };
+    }
 }

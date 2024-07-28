@@ -1,5 +1,7 @@
 package com.example.api_university_manager.components.professor;
 
+import com.example.api_university_manager.components.jwt.Token;
+import com.example.api_university_manager.components.student.Student;
 import com.example.api_university_manager.components.student_course.StudentCourse;
 import com.example.api_university_manager.components.student_course.StudentCourseService;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,12 @@ public class ProfessorController {
     public ResponseEntity<Professor> saveProfessor(@RequestBody Professor requestData){
         Professor savedProfessor = professorService.saveProfessor(requestData);
         return ResponseEntity.status(201).body(savedProfessor);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<Token> login(@RequestBody Professor requestData){
+        Token jwt = professorService.login(requestData);
+        return ResponseEntity.status(200).body(jwt);
     }
 
     @PutMapping("/update/{id}")
