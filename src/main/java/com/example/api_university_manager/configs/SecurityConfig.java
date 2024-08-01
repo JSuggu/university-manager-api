@@ -3,6 +3,7 @@ package com.example.api_university_manager.configs;
 import com.example.api_university_manager.components.professor.ProfessorRepository;
 import com.example.api_university_manager.components.student.StudentRepository;
 import com.example.api_university_manager.components.user.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

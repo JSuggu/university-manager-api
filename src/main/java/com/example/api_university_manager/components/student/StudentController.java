@@ -1,7 +1,10 @@
 package com.example.api_university_manager.components.student;
 
+import com.example.api_university_manager.components.course.CourseDTO;
+import com.example.api_university_manager.components.degree.DegreeDTO;
 import com.example.api_university_manager.components.degree.DegreeService;
 import com.example.api_university_manager.components.jwt.Token;
+import com.example.api_university_manager.components.professor.ProfessorDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,28 +19,40 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<Student>> getAllStudents(){
-        List<Student> degreesList = studentService.getAllStudents();
+    @GetMapping("/get/all")
+    public ResponseEntity<List<StudentDTO>> getAllStudents(){
+        List<StudentDTO> degreesList = studentService.getAllStudents();
         return ResponseEntity.status(200).body(degreesList);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Student> saveDegree(@RequestBody Student requestData){
-        Student savedStudent = studentService.saveStudent(requestData);
+    public ResponseEntity<StudentDTO> saveDegree(@RequestBody StudentDTO requestData){
+        StudentDTO savedStudent = studentService.saveStudent(requestData);
         return ResponseEntity.status(201).body(savedStudent);
     }
 
-    @PostMapping("login")
-    public ResponseEntity<Token> login(@RequestBody Student requestData){
+    @PostMapping("/login")
+    public ResponseEntity<Token> login(@RequestBody StudentDTO requestData){
         Token jwt = studentService.login(requestData);
         return ResponseEntity.status(200).body(jwt);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable(name = "id") Long idToUpdate,@RequestBody Student requestData){
-        Student updatedStudent = studentService.updateStudent(idToUpdate, requestData);
+    public ResponseEntity<StudentDTO> updateStudent(@PathVariable(name = "id") Long studentId,@RequestBody StudentDTO requestData){
+        StudentDTO updatedStudent = studentService.updateStudent(studentId, requestData);
         return ResponseEntity.status(201).body(updatedStudent);
+    }
+
+    @PutMapping("/update/student-degrees/{studentId}")
+    public ResponseEntity<StudentDTO> updateDegreesOfStudent(@PathVariable(name="studentId") Long studentId, @RequestBody List<DegreeDTO> requestData){
+        StudentDTO updatedCoursesOfStudent = studentService.updateDegreesOfStudent(studentId, requestData);
+        return ResponseEntity.status(201).body(updatedCoursesOfStudent);
+    }
+
+    @PutMapping("/update/student-courses/{studentId}")
+    public ResponseEntity<StudentDTO> updateCoursesOfStudent(@PathVariable(name="studentId") Long studentId, @RequestBody List<CourseDTO> requestData){
+        StudentDTO updatedCoursesOfStudent = studentService.updateCoursesOfStudent(studentId, requestData);
+        return ResponseEntity.status(201).body(updatedCoursesOfStudent);
     }
 
     @DeleteMapping("/delete/{id}")

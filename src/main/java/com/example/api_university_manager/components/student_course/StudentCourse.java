@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 public class StudentCourse {
     @EmbeddedId
     private StudentCourseId id = new StudentCourseId();
-    @JsonIgnore
+
     @ManyToOne()
     @MapsId("studentId")
     private Student student;
@@ -18,14 +18,14 @@ public class StudentCourse {
     @MapsId("courseId")
     private Course course;
 
-    private boolean aprproved;
+    private Boolean approved;
 
     public StudentCourse(){}
 
-    public StudentCourse(Student student, Course course, boolean aprproved) {
+    public StudentCourse(Student student, Course course, Boolean approved) {
         this.student = student;
         this.course = course;
-        this.aprproved = aprproved;
+        this.approved = approved;
     }
 
     public Student getStudent() {
@@ -44,11 +44,11 @@ public class StudentCourse {
         this.course = course;
     }
 
-    public boolean isAprproved() {
-        return aprproved;
+    public Boolean isApproved() {
+        return approved;
     }
 
-    public void setAprproved(boolean aprproved) {
-        this.aprproved = aprproved;
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
     }
 }

@@ -1,12 +1,23 @@
 package com.example.api_university_manager.util;
 
+import com.example.api_university_manager.components.course.Course;
+import com.example.api_university_manager.components.course.CourseDTO;
 import com.example.api_university_manager.components.jwt.JwtService;
 import com.example.api_university_manager.components.jwt.Token;
+import com.example.api_university_manager.components.student.StudentDTO;
+import com.example.api_university_manager.components.student_course.StudentCourse;
+import org.modelmapper.AbstractConverter;
+import org.modelmapper.Converter;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class OtherUtilities {

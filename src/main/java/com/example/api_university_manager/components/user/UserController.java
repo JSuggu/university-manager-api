@@ -16,27 +16,27 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<User>> getAllUsers(){
-        List<User> userList = userService.getAllUsers();
+    @GetMapping("/get/all")
+    public ResponseEntity<List<UserDTO>> getAllUsers(){
+        List<UserDTO> userList = userService.getAllUsers();
         return ResponseEntity.status(200).body(userList);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<User> saveUser(@RequestBody User requestData){
-        User savedUser = userService.saveUser(requestData);
+    public ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO requestData){
+        UserDTO savedUser = userService.saveUser(requestData);
         return ResponseEntity.status(201).body(savedUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Token> login(@RequestBody User requestData){
+    public ResponseEntity<Token> login(@RequestBody UserDTO requestData){
         Token jwt = userService.login(requestData);
         return ResponseEntity.status(200).body(jwt);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable(name = "id") Long idToUpdate, @RequestBody User requestData) {
-        User updatedUser = userService.updateUser(idToUpdate, requestData);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable(name = "id") Long idToUpdate, @RequestBody UserDTO requestData) {
+        UserDTO updatedUser = userService.updateUser(idToUpdate, requestData);
         return ResponseEntity.status(201).body(updatedUser);
     }
 

@@ -15,10 +15,10 @@ public class Course {
     private Long id;
     private String name;
     private Integer numberOfHours;
-    @JsonIgnore
+
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<StudentCourse> studentSet;
-    @JsonIgnore
+
     @ManyToMany(mappedBy = "courseSet")
     private Set<Professor> professorSet;
 

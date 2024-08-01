@@ -1,13 +1,16 @@
 package com.example.api_university_manager.components.student;
 
 import com.example.api_university_manager.components.course.Course;
-import com.example.api_university_manager.components.course.CourseService;
+import com.example.api_university_manager.components.course.CourseDTO;
+import com.example.api_university_manager.components.course.CourseRepository;
 import com.example.api_university_manager.components.degree.Degree;
-import com.example.api_university_manager.components.degree.DegreeService;
+import com.example.api_university_manager.components.degree.DegreeDTO;
+import com.example.api_university_manager.components.degree.DegreeRepository;
 import com.example.api_university_manager.components.jwt.Token;
 import com.example.api_university_manager.components.student_course.StudentCourse;
 import com.example.api_university_manager.util.OtherUtilities;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -15,59 +18,104 @@ import static org.springframework.data.crossstore.ChangeSetPersister.NotFoundExc
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
-    private final DegreeService degreeService;
-    private final CourseService courseService;
+    private final DegreeRepository degreeRepository;
+    private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
     private final OtherUtilities otherUtilities;
+    private final ModelMapper modelMapper;
 
 
-    public StudentService(StudentRepository studentRepository, DegreeService degreeService, CourseService courseService, PasswordEncoder passwordEncoder, OtherUtilities otherUtilities){
+    public StudentService(StudentRepository studentRepository, DegreeRepository degreeRepository, CourseRepository courseRepository, PasswordEncoder passwordEncoder, OtherUtilities otherUtilities, ModelMapper modelMapper){
         this.studentRepository = studentRepository;
-        this.degreeService = degreeService;
-        this.courseService = courseService;
+        this.degreeRepository = degreeRepository;
+        this.courseRepository = courseRepository;
         this.passwordEncoder = passwordEncoder;
         this.otherUtilities = otherUtilities;
+        this.modelMapper = modelMapper;
     }
 
-    public List<Student> getAllStudents(){
-        return studentRepository.findAll();
+    public List<StudentDTO> getAllStudents(){
+        List<Student> allStudents = studentRepository.findAll();
+
+        return allStudents
+                .stream()
+                .map(student -> {
+                    Set<CourseDTO> mappedCourses = student.getCourseSet()
+                            .stream()
+                            .map(studentCourse -> modelMapper.map(studentCourse.getCourse(), CourseDTO.class))
+                            .collect(Collectors.toSet());
+
+                    StudentDTO mappedStudent = modelMapper.map(student, StudentDTO.class);
+                    mappedStudent.setCourseSet(mappedCourses);
+
+                    return mappedStudent;
+                })
+                .toList();
     }
 
     @Transactional
-    public Student saveStudent(Student newStudent){
-        Set<Degree> degreesToRegister = new HashSet<>();
-        for(Degree degree: newStudent.getDegreeSet()){
-            Degree degreeSaved = degreeService.getDegreeByName(degree.getName());
-            if(degreeSaved != null) degreesToRegister.add(degreeSaved);
-        }
+    public StudentDTO saveStudent(StudentDTO newStudent){
+        Student studentToSave = new Student(newStudent.getNames(), newStudent.getDni(), newStudent.getUsername(), newStudent.getPassword(), null, null);
+        studentToSave.setPassword(passwordEncoder.encode(studentToSave.getPassword()));
 
-        Set<StudentCourse> courseToRegister = new HashSet<>();
-        StudentCourse newStudentCourse;
-        for(StudentCourse course: newStudent.getCourseSet()){
-            Course courseSaved = courseService.getCourseByName(course.getCourse().getName());
-            if(courseSaved != null){
-                newStudentCourse = new StudentCourse(newStudent, courseSaved, false);
-                courseToRegister.add(newStudentCourse);
+        Set<Degree> degreesToRegister = new HashSet<>();
+
+        if(newStudent.getDegreeSet() != null && !newStudent.getDegreeSet().isEmpty()){
+            for(DegreeDTO degree: newStudent.getDegreeSet()){
+                Degree savedDegree = null;
+
+                if(degree.getId() != null) savedDegree = degreeRepository.findById(degree.getId()).orElseThrow(() -> new RuntimeException("Degree not found", new NotFoundException()));
+                else if(degree.getName() != null) savedDegree = degreeRepository.findByName(degree.getName()).orElseThrow(() -> new RuntimeException("Degree not found", new NotFoundException()));
+
+                if(savedDegree != null) degreesToRegister.add(modelMapper.map(savedDegree, Degree.class));
             }
         }
 
-        newStudent.setPassword(passwordEncoder.encode(newStudent.getPassword()));
+        Set<StudentCourse> courseToRegister = new HashSet<>();
 
-        newStudent.setDegreeSet(degreesToRegister);
-        newStudent.setCourseSet(courseToRegister);
-        return studentRepository.save(newStudent);
+        if(newStudent.getCourseSet() != null && !newStudent.getCourseSet().isEmpty()){
+            for(CourseDTO course: newStudent.getCourseSet()){
+                StudentCourse newStudentCourse;
+                Course savedCourse = null;
+
+                if(course.getId() != null) savedCourse = courseRepository.findById(course.getId()).orElseThrow(() -> new RuntimeException("Course not found", new NotFoundException()));
+                else if(course.getName() != null) savedCourse = courseRepository.findByName(course.getName()).orElseThrow(() -> new RuntimeException("Course not found", new NotFoundException()));
+
+                if(savedCourse != null){
+                    newStudentCourse = new StudentCourse(studentToSave, savedCourse, false);
+                    courseToRegister.add(newStudentCourse);
+                }
+            }
+        }
+
+        studentToSave.setDegreeSet(degreesToRegister);
+        studentToSave.setCourseSet(courseToRegister);
+
+        Student savedStudent = studentRepository.save(studentToSave);
+
+        Set<CourseDTO> mappedCourses = savedStudent.getCourseSet()
+                .stream()
+                .map(studentCourse -> modelMapper.map(studentCourse.getCourse(), CourseDTO.class))
+                .collect(Collectors.toSet());
+
+        StudentDTO finalStudent = modelMapper.map(savedStudent, StudentDTO.class);
+
+        finalStudent.setCourseSet(mappedCourses);
+
+        return finalStudent;
     }
 
-    public Token login(Student requestData) {
-        return otherUtilities.loginProcess(requestData);
+    public Token login(StudentDTO requestData) {
+        return otherUtilities.loginProcess(modelMapper.map(requestData, Student.class));
     }
 
     @Transactional
-    public Student updateStudent(Long id, Student updatedStudent) {
+    public StudentDTO updateStudent(Long id, StudentDTO updatedStudent) {
         Student studentToUpdate = studentRepository.findById(id).orElseThrow(() -> new RuntimeException("Student not found", new NotFoundException()));
 
         studentToUpdate.setNames(updatedStudent.getNames());
@@ -75,26 +123,41 @@ public class StudentService {
         studentToUpdate.setUsername(updatedStudent.getUsername());
         studentToUpdate.setPassword(updatedStudent.getPassword());
 
-        Set<Degree> degreesToRegister = new HashSet<>();
-        for(Degree degree: updatedStudent.degreeSet){
-            Degree degreeSaved = degreeService.getDegreeByName(degree.getName());
-            if(degreeSaved != null) degreesToRegister.add(degreeSaved);
-        }
+        Student savedStudent = studentRepository.save(studentToUpdate);
+        return modelMapper.map(savedStudent, StudentDTO.class);
+    }
 
-        Set<StudentCourse> coursesToRegister = new HashSet<>();
-        StudentCourse newStudentCourse;
-        for(StudentCourse studentCourse: updatedStudent.courseSet){
-            Course courseSaved = courseService.getCourseByName(studentCourse.getCourse().getName());
-            if(courseSaved != null){
-                newStudentCourse = new StudentCourse(updatedStudent, courseSaved, false);
-                coursesToRegister.add(newStudentCourse);
-            }
-        }
+    @Transactional
+    public StudentDTO updateDegreesOfStudent(Long idStudent, List<DegreeDTO> requestData){
+        Student studentToUpdate = studentRepository.findById(idStudent).orElseThrow(() -> new RuntimeException("Student not found", new NotFoundException()));
 
-        studentToUpdate.setDegreeSet(degreesToRegister);
-        studentToUpdate.setCourseSet(coursesToRegister);
+        studentToUpdate.setDegreeSet(requestData
+                .stream()
+                .map(degreeDTO -> modelMapper.map(degreeDTO, Degree.class))
+                .collect(Collectors.toSet())
+        );
 
-        return studentRepository.save(studentToUpdate);
+        Student updatedDegreeOfStudent = studentRepository.save(studentToUpdate);
+
+        return modelMapper.map(updatedDegreeOfStudent, StudentDTO.class);
+    }
+
+    @Transactional
+    public StudentDTO updateCoursesOfStudent(Long idStudent, List<CourseDTO> requestData){
+        Student studentToUpdate = studentRepository.findById(idStudent).orElseThrow(() -> new RuntimeException("Student not found", new NotFoundException()));
+
+        studentToUpdate.setCourseSet(requestData
+                .stream()
+                .map(courseDTO -> {
+                    Course course = modelMapper.map(courseDTO, Course.class);
+                    return new StudentCourse(studentToUpdate, course, false);
+                })
+                .collect(Collectors.toSet())
+        );
+
+        Student updatedCoursesOfStudent = studentRepository.save(studentToUpdate);
+
+        return modelMapper.map(updatedCoursesOfStudent, StudentDTO.class);
     }
 
     public void deleteStudent(Long id){

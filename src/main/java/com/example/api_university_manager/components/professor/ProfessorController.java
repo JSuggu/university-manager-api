@@ -1,7 +1,7 @@
 package com.example.api_university_manager.components.professor;
 
+import com.example.api_university_manager.components.course.CourseDTO;
 import com.example.api_university_manager.components.jwt.Token;
-import com.example.api_university_manager.components.student.Student;
 import com.example.api_university_manager.components.student_course.StudentCourse;
 import com.example.api_university_manager.components.student_course.StudentCourseService;
 import org.springframework.http.ResponseEntity;
@@ -20,32 +20,39 @@ public class ProfessorController {
         this.studentCourseService = studentCourseService;
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<Professor>> getAllProfessors(){
-        List<Professor> professorList = professorService.getAllProfessor();
+    @GetMapping("/get/all")
+    public ResponseEntity<List<ProfessorDTO>> getAllProfessors(){
+        List<ProfessorDTO> professorList = professorService.getAllProfessors();
         return ResponseEntity.status(200).body(professorList);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Professor> saveProfessor(@RequestBody Professor requestData){
-        Professor savedProfessor = professorService.saveProfessor(requestData);
+    public ResponseEntity<ProfessorDTO> saveProfessor(@RequestBody ProfessorDTO requestData){
+        ProfessorDTO savedProfessor = professorService.saveProfessor(requestData);
         return ResponseEntity.status(201).body(savedProfessor);
     }
 
-    @PostMapping("login")
-    public ResponseEntity<Token> login(@RequestBody Professor requestData){
+    @PostMapping("/login")
+    public ResponseEntity<Token> login(@RequestBody ProfessorDTO requestData){
         Token jwt = professorService.login(requestData);
         return ResponseEntity.status(200).body(jwt);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Professor> updateProfessor(@PathVariable(name = "id") Long idToUpdate, @RequestBody Professor requestData) {
-        Professor updatedProfessor = professorService.updateProfessor(idToUpdate, requestData);
+    public ResponseEntity<ProfessorDTO> updateProfessor(@PathVariable(name = "id") Long professorId, @RequestBody ProfessorDTO requestData) {
+        ProfessorDTO updatedProfessor = professorService.updateProfessor(professorId, requestData);
         return ResponseEntity.status(201).body(updatedProfessor);
     }
 
-    @PutMapping("/update/{studentId}/{courseId}")
-    public ResponseEntity<StudentCourse> updateStudentCourse(@PathVariable(name = "studentId") Long studentId, @PathVariable(name = "courseId") Long courseId, @RequestParam boolean approved) {
+    @PutMapping("/update/professor-courses/{professorId}")
+    public ResponseEntity<ProfessorDTO> updateCoursesOfProfessor(@PathVariable(name="professorId") Long professorId, @RequestBody List<CourseDTO> requestData){
+        ProfessorDTO updatedCoursesOfProfessor = professorService.updateCoursesOfProfessor(professorId, requestData);
+        return ResponseEntity.status(201).body(updatedCoursesOfProfessor);
+    }
+
+    @PutMapping("/update/course-state/{studentId}/{courseId}/{courseState}")
+    public ResponseEntity<StudentCourse> updateCourseState(@PathVariable(name = "studentId") Long studentId, @PathVariable(name = "courseId")
+    Long courseId, @PathVariable(name = "courseState") boolean approved) {
         StudentCourse updatedStudentCourse = studentCourseService.updateCourseStateToStudent(studentId,courseId,approved);
         return ResponseEntity.status(201).body(updatedStudentCourse);
     }
@@ -55,5 +62,4 @@ public class ProfessorController {
         professorService.deleteProfessor(idToDelete);
         return ResponseEntity.status(200).body("Professor deleted");
     }
-
 }

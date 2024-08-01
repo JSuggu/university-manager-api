@@ -15,21 +15,27 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<Course>> getAllCourses(){
-        List<Course> coursesList = courseService.getAllCourses();
+    @GetMapping("/get/all")
+    public ResponseEntity<List<CourseDTO>> getAllCourses(){
+        List<CourseDTO> coursesList = courseService.getAllCourses();
         return ResponseEntity.status(200).body(coursesList);
     }
 
+    @GetMapping("/get/{name}")
+    public ResponseEntity<CourseDTO> getCourseByName(@PathVariable(name = "name") String courseName){
+        CourseDTO course = courseService.getCourseByName(courseName);
+        return ResponseEntity.status(200).body(course);
+    }
+
     @PostMapping("/save")
-    public ResponseEntity<Course> saveCourse(@RequestBody Course requestData){
-        Course savedCourse = courseService.saveCourse(requestData);
+    public ResponseEntity<CourseDTO> saveCourse(@RequestBody CourseDTO requestData){
+        CourseDTO savedCourse = courseService.saveCourse(requestData);
         return ResponseEntity.status(201).body(savedCourse);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Course> updateCourse(@PathVariable(name = "id") Long idToUpdate, @RequestBody Course requestData) {
-        Course updatedCourse = courseService.updateCourse(idToUpdate, requestData);
+    public ResponseEntity<CourseDTO> updateCourse(@PathVariable(name = "id") Long idToUpdate, @RequestBody CourseDTO requestData) {
+        CourseDTO updatedCourse = courseService.updateCourse(idToUpdate, requestData);
         return ResponseEntity.status(201).body(updatedCourse);
     }
 

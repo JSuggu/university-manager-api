@@ -14,9 +14,9 @@ public class Professor implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String names;
-    String username;
-    String password;
+    private String names;
+    private String username;
+    private String password;
 
     @ManyToMany
     @JoinTable(

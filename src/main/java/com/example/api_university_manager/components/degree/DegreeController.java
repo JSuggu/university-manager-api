@@ -14,21 +14,21 @@ public class DegreeController {
         this.degreeService = degreeService;
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<Degree>> getAllDegrees(){
-        List<Degree> degreesList = degreeService.getAllDegrees();
+    @GetMapping("/get/all")
+    public ResponseEntity<List<DegreeDTO>> getAllDegrees(){
+        List<DegreeDTO> degreesList = degreeService.getAllDegrees();
         return ResponseEntity.status(200).body(degreesList);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Degree> saveDegree(@RequestBody Degree requestData){
-        Degree savedDegree = degreeService.saveDegree(requestData);
+    public ResponseEntity<DegreeDTO> saveDegree(@RequestBody DegreeDTO requestData){
+        DegreeDTO savedDegree = degreeService.saveDegree(requestData);
         return ResponseEntity.status(201).body(savedDegree);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Degree> updateDegree(@PathVariable(name = "id") Long idToUpdate, @RequestBody Degree requestData) {
-        Degree updatedDegree = degreeService.updateDegree(idToUpdate, requestData);
+    public ResponseEntity<DegreeDTO> updateDegree(@PathVariable(name = "id") Long idToUpdate, @RequestBody DegreeDTO requestData) {
+        DegreeDTO updatedDegree = degreeService.updateDegree(idToUpdate, requestData);
         return ResponseEntity.status(201).body(updatedDegree);
     }
 

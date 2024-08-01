@@ -17,7 +17,6 @@ public class Degree {
     private Integer numberOfHours;
     private Integer numberOfCourses;
     @ManyToMany(mappedBy = "degreeSet")
-    @JsonIgnore
     private Set<Student> studentSet;
 
     public Degree(){}
