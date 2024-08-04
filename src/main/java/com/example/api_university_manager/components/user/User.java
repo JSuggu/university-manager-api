@@ -19,6 +19,7 @@ public class User implements UserDetails {
     private Long id;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
     public User(){}
@@ -33,7 +34,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles()
                 .stream()
-                .map((rol -> new SimpleGrantedAuthority(rol.name())))
+                .map((rol -> new SimpleGrantedAuthority("ROLE_"+rol.name())))
                 .collect(Collectors.toList());
     }
 

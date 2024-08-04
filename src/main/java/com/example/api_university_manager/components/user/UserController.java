@@ -16,13 +16,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/dev/get/all")
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         List<UserDTO> userList = userService.getAllUsers();
         return ResponseEntity.status(200).body(userList);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/dev/save")
     public ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO requestData){
         UserDTO savedUser = userService.saveUser(requestData);
         return ResponseEntity.status(201).body(savedUser);
@@ -34,13 +34,13 @@ public class UserController {
         return ResponseEntity.status(200).body(jwt);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/dev/update/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable(name = "id") Long idToUpdate, @RequestBody UserDTO requestData) {
         UserDTO updatedUser = userService.updateUser(idToUpdate, requestData);
         return ResponseEntity.status(201).body(updatedUser);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/dev/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Long idToDelete){
         userService.deleteUser(idToDelete);
         return ResponseEntity.status(200).body("User deleted");

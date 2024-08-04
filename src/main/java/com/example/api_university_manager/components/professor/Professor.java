@@ -1,8 +1,10 @@
 package com.example.api_university_manager.components.professor;
 
 import com.example.api_university_manager.components.course.Course;
+import com.example.api_university_manager.util.Role;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -17,6 +19,8 @@ public class Professor implements UserDetails {
     private String names;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
     @ManyToMany
     @JoinTable(
@@ -32,12 +36,16 @@ public class Professor implements UserDetails {
         this.names = names;
         this.username = email;
         this.password = password;
+        this.roles = Set.of(Role.PROFESSOR);
         this.courseSet = courseSet;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
+                .toList();
     }
 
     public String getUsername() {
@@ -90,6 +98,14 @@ public class Professor implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Set<Course> getCourseSet() {

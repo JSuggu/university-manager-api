@@ -14,25 +14,25 @@ public class DegreeController {
         this.degreeService = degreeService;
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/admin/get/all")
     public ResponseEntity<List<DegreeDTO>> getAllDegrees(){
         List<DegreeDTO> degreesList = degreeService.getAllDegrees();
         return ResponseEntity.status(200).body(degreesList);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/admin/save")
     public ResponseEntity<DegreeDTO> saveDegree(@RequestBody DegreeDTO requestData){
         DegreeDTO savedDegree = degreeService.saveDegree(requestData);
         return ResponseEntity.status(201).body(savedDegree);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/admin/update/{id}")
     public ResponseEntity<DegreeDTO> updateDegree(@PathVariable(name = "id") Long idToUpdate, @RequestBody DegreeDTO requestData) {
         DegreeDTO updatedDegree = degreeService.updateDegree(idToUpdate, requestData);
         return ResponseEntity.status(201).body(updatedDegree);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/admin/delete/{id}")
     public ResponseEntity<String> deleteDegree(@PathVariable("id") Long idToDelete){
         degreeService.deleteDegree(idToDelete);
         return ResponseEntity.status(200).body("Degree deleted");

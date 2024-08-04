@@ -19,13 +19,13 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/admin/get/all")
     public ResponseEntity<List<StudentDTO>> getAllStudents(){
         List<StudentDTO> degreesList = studentService.getAllStudents();
         return ResponseEntity.status(200).body(degreesList);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/admin/save")
     public ResponseEntity<StudentDTO> saveDegree(@RequestBody StudentDTO requestData){
         StudentDTO savedStudent = studentService.saveStudent(requestData);
         return ResponseEntity.status(201).body(savedStudent);
@@ -37,25 +37,25 @@ public class StudentController {
         return ResponseEntity.status(200).body(jwt);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/admin/update/{id}")
     public ResponseEntity<StudentDTO> updateStudent(@PathVariable(name = "id") Long studentId,@RequestBody StudentDTO requestData){
         StudentDTO updatedStudent = studentService.updateStudent(studentId, requestData);
         return ResponseEntity.status(201).body(updatedStudent);
     }
 
-    @PutMapping("/update/student-degrees/{studentId}")
+    @PutMapping("/admin/update/student-degrees/{studentId}")
     public ResponseEntity<StudentDTO> updateDegreesOfStudent(@PathVariable(name="studentId") Long studentId, @RequestBody List<DegreeDTO> requestData){
         StudentDTO updatedCoursesOfStudent = studentService.updateDegreesOfStudent(studentId, requestData);
         return ResponseEntity.status(201).body(updatedCoursesOfStudent);
     }
 
-    @PutMapping("/update/student-courses/{studentId}")
+    @PutMapping("/admin/update/student-courses/{studentId}")
     public ResponseEntity<StudentDTO> updateCoursesOfStudent(@PathVariable(name="studentId") Long studentId, @RequestBody List<CourseDTO> requestData){
         StudentDTO updatedCoursesOfStudent = studentService.updateCoursesOfStudent(studentId, requestData);
         return ResponseEntity.status(201).body(updatedCoursesOfStudent);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/admin/delete/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable("id") Long idToDelete){
         studentService.deleteStudent(idToDelete);
         return ResponseEntity.status(200).body("Degree deleted");

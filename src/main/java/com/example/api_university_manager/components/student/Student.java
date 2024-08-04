@@ -1,10 +1,11 @@
 package com.example.api_university_manager.components.student;
 
-import com.example.api_university_manager.components.course.Course;
 import com.example.api_university_manager.components.degree.Degree;
 import com.example.api_university_manager.components.student_course.StudentCourse;
+import com.example.api_university_manager.util.Role;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -20,6 +21,8 @@ public class Student implements UserDetails {
     private Integer dni;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
 
     @ManyToMany
     @JoinTable(
@@ -39,13 +42,17 @@ public class Student implements UserDetails {
         this.dni = dni;
         this.username = email;
         this.password = password;
+        this.roles = Set.of(Role.STUDENT);
         this.degreeSet = degreeSet;
         this.courseSet = courseSet;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
+                .toList();
     }
 
     public String getPassword() {
@@ -107,6 +114,14 @@ public class Student implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Set<Degree> getDegreeSet() {
